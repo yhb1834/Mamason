@@ -21,7 +21,7 @@
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/addnum"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:backgroundTint="@color/yellow"

@@ -1,10 +1,12 @@
 package com.example.mamason.ui.home;
 
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
@@ -64,9 +66,13 @@ public class emAdapter extends RecyclerView.Adapter<emAdapter.ItemViewHolder>
             public void onClick(View v) {
                 getPosition();
 
+
             }
         });
     }
+
+
+
 
     public  void addItem(emalarm_data data){
         mEmalarm.add(data);
