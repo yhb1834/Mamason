@@ -18,29 +18,28 @@ import com.example.mamason.databinding.FragmentDashboardBinding;
 public class DashboardFragment extends Fragment {
 
     private DashboardViewModel dashboardViewModel;
-    private FragmentDashboardBinding binding;
+    //private FragmentDashboardBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        //dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+        View v = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        //binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        //View root = binding.getRoot();
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textDashboard;
+        /*final TextView textView = binding.textDashboard;
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
-        });
-        return root;
+        });*/
+        return v;
     }
 
-    @Override
+    /*@Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
+    }*/
 }

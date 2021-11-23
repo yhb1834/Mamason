@@ -17,30 +17,29 @@ import com.example.mamason.databinding.FragmentNotificationsBinding;
 
 public class NotificationsFragment extends Fragment {
 
-    private NotificationsViewModel notificationsViewModel;
-    private FragmentNotificationsBinding binding;
+    //private NotificationsViewModel notificationsViewModel;
+    //private FragmentNotificationsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
+        //notificationsViewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
+        View v = inflater.inflate(R.layout.fragment_notifications, container, false);
+        //binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        //View root = binding.getRoot();
 
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textNotifications;
+        /*final TextView textView = binding.textNotifications;
         notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
-        });
-        return root;
+        });*/
+        return v;
     }
 
-    @Override
+    /*@Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
+    }*/
 }
