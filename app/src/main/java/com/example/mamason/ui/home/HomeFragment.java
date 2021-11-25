@@ -73,8 +73,8 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 //sendSMS("01075411834", "엄마! ");
                 Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setData(ContactsContract.Contacts.CONTENT_URI);
-                //intent.setData(ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+                //intent.setData(ContactsContract.Contacts.CONTENT_URI);
+                intent.setData(ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
                 //Intent intent = new Intent(Intent.ACTION_VIEW);
                 //intent.setData(Uri.parse(ContactsContract.Contacts.CONTENT_URI+"/"+1066));
                 getActivity().startActivityForResult(intent, 10);
