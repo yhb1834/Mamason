@@ -4,6 +4,7 @@ public class Phone {
     private String index;
     private String pname;
     private String pnum;
+    private int position;
 
     public String getIndex() {
         return index;
@@ -35,5 +36,8 @@ public class Phone {
         this.pnum = pnum;
     }
 
+    public void setPosition(int toPosition) {
+        this.position = toPosition;
+    }
 }
 

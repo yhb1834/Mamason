@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mamason.R;
@@ -14,13 +15,18 @@ import com.example.mamason.R;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ItemViewHolder> {
+public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ItemViewHolder> implements SimpleItemTouchHelperCallback.OnItemMoveListener{
 
     private ArrayList<Phone> mList;
     private int position;
     public PhoneAdapter(ArrayList<Phone> list){
         this.mList = list;
+    }
+
+    public PhoneAdapter() {
+
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder{
@@ -82,7 +88,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ItemViewHold
 
     @Override
     public int getItemCount() {
-        return (null != mList ? mList.size() : 0);
+        return mList.size();
     }
 
     public ArrayList<Phone> getListData(){
@@ -91,6 +97,52 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ItemViewHold
 
     public void setListData(ArrayList<Phone> listData){
         this.mList = listData;
+        notifyDataSetChanged();
     }
 
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        //Collections.swap(mList, fromPosition, toPosition);
+        /*if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(mList, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mList, i, i - 1);
+            }
+        }*/
+        Phone number = mList.get(fromPosition);
+        mList.remove(fromPosition);
+        mList.add(toPosition,number);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemSwipe(int adapterPosition) {
+        mList.remove(position);
+        this.notifyItemRemoved(position);
+        //notifyItemRangeChanged(position, mList.size());
+    }
+
+    public interface ItemTouchHelperListener{
+        boolean onItemMove(int from_position, int to_position);
+        void onItemSwipe(int position);
+    }
+
+    ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            final int position = viewHolder.getAdapterPosition();
+            mList.remove(position);
+            notifyItemRemoved(position);
+        }
+    };
 }
+
+

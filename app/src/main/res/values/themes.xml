@@ -11,6 +11,15 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">#00BCD4</item>
         <!-- Customize your theme here. -->
-        
+
     </style>
+
+    <style name="Theme.Mamason.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Mamason.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Mamason.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

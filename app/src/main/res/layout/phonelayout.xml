@@ -28,11 +28,10 @@
         android:text="TextView"
         android:textSize="16sp" />
 
-    <!--<Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="53dp"
-        android:layout_weight="1"
-        android:text="Button" />-->
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="50dp"
+        android:layout_height="56dp"
+        android:text="Button" />
 
 </LinearLayout>

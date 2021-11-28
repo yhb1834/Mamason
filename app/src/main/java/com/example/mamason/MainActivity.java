@@ -1,44 +1,48 @@
 package com.example.mamason;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.telephony.SmsManager;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.mamason.ui.home.HomeFragment;
+import com.example.mamason.ui.dashboard.medicineFragment;
+import com.example.mamason.ui.home.AlarmAddFragment;
+import com.example.mamason.ui.home.MessageFragment;
 import com.example.mamason.ui.home.Phone;
 import com.example.mamason.ui.home.PhoneAdapter;
+import com.example.mamason.ui.home.SimpleItemTouchHelperCallback;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mamason.databinding.ActivityMainBinding;
-
 import java.util.ArrayList;
+import java.util.Stack;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
     private Fragment HomeFragment;
 
     public ArrayList<Phone> PhoneData;
     private RecyclerView mRecyclerView1;
     private PhoneAdapter phoneAdapter;
     //private ActivityMainBinding binding;
+
+    //public static Stack<Fragment> fragmentStack;
+    OnBackPressedListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +52,47 @@ public class MainActivity extends AppCompatActivity {
         //긴급 연락망 추가
         mRecyclerView1 = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager mlinear = new LinearLayoutManager(this);
+        mlinear.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView1.setLayoutManager(mlinear);
+
+        //phoneAdapter = new PhoneAdapter();
         PhoneData = new ArrayList<Phone>();
+
+        mRecyclerView1.setAdapter(phoneAdapter);
+
+        SimpleItemTouchHelperCallback callback =  new SimpleItemTouchHelperCallback(phoneAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView1);
+
+
+        /*Button message = findViewById(R.id.message_setting);
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment_activity_main, new MessageFragment());
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });*/
+
+
+        /*Button alarm = findViewById(R.id.add);
+        alarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment_activity_main, new AlarmAddFragment());
+                ft.addToBackStack(null);
+                ft.commit();
+                //getSupportFragmentManager().beginTransaction()
+                //        .replace(R.id.container, new AlarmAddFragment()).addToBackStack(null).commit();
+            }
+        });*/
+
+
+
+
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -61,6 +104,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         showContacts();
+    }
+
+    @Override
+    public void onBackPressed(){
+        /*if(listener != null) {
+            listener.onBackPressed();
+        }else{
+            super.onBackPressed();
+        }*/
+        super.onBackPressed();
     }
 
     public void moveTonum() {
