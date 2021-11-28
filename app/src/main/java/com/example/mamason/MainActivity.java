@@ -14,6 +14,8 @@ import android.telephony.SmsManager;
 import android.widget.Toast;
 
 import com.example.mamason.ui.home.HomeFragment;
+import com.example.mamason.ui.home.Phone;
+import com.example.mamason.ui.home.PhoneAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.RequiresApi;
@@ -23,12 +25,19 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mamason.databinding.ActivityMainBinding;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private Fragment HomeFragment;
 
+    public ArrayList<Phone> PhoneData;
+    private RecyclerView mRecyclerView1;
+    private PhoneAdapter phoneAdapter;
     //private ActivityMainBinding binding;
 
     @Override
@@ -36,12 +45,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //binding = ActivityMainBinding.inflate(getLayoutInflater());
-        //setContentView(binding.getRoot());
+        //긴급 연락망 추가
+        mRecyclerView1 = (RecyclerView) findViewById(R.id.recyclerView);
+        LinearLayoutManager mlinear = new LinearLayoutManager(this);
+        mRecyclerView1.setLayoutManager(mlinear);
+        PhoneData = new ArrayList<Phone>();
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
@@ -83,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 // Permission is granted
                 showContacts();
             } else {
-                Toast.makeText(this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "권한을 승인해야 합니다", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -102,6 +113,15 @@ public class MainActivity extends AppCompatActivity {
             String getname = cursor.getString(0);
             String getphone = cursor.getString(1);
             Toast.makeText(getApplicationContext(), "연락처 이름 : " + getname + "\n연락처 전화번호 : " + getphone, Toast.LENGTH_LONG).show();
+
+            /*Bundle bundle = new Bundle();
+            bundle.putString("name", getname);
+            bundle.putString("phone", getphone);
+*/
+            PhoneData.add(new Phone(getname,getphone));
+            phoneAdapter = new PhoneAdapter(PhoneData);
+            mRecyclerView1.setAdapter(phoneAdapter);
+            phoneAdapter.notifyDataSetChanged();
 
             cursor.close();
 
