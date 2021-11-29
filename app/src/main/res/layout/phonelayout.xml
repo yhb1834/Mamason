@@ -17,6 +17,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:gravity="center_vertical"
         android:text="TextView"
         android:textSize="16sp" />
 
@@ -25,13 +26,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:gravity="center_vertical"
         android:text="TextView"
         android:textSize="16sp" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="50dp"
-        android:layout_height="56dp"
-        android:text="Button" />
+        android:id="@+id/sendm1"
+        android:layout_width="63dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="문자" />
 
 </LinearLayout>

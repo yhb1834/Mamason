@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.mamason.ui.dashboard.medicineFragment;
 import com.example.mamason.ui.home.AlarmAddFragment;
+import com.example.mamason.ui.home.HomeFragment;
 import com.example.mamason.ui.home.MessageFragment;
 import com.example.mamason.ui.home.Phone;
 import com.example.mamason.ui.home.PhoneAdapter;
@@ -20,6 +22,7 @@ import com.example.mamason.ui.home.SimpleItemTouchHelperCallback;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -35,10 +38,10 @@ import java.util.Stack;
 
 public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
     private Fragment HomeFragment;
-
     public ArrayList<Phone> PhoneData;
     private RecyclerView mRecyclerView1;
     private PhoneAdapter phoneAdapter;
+
     //private ActivityMainBinding binding;
 
     //public static Stack<Fragment> fragmentStack;
@@ -48,8 +51,8 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 1);
 
-        //긴급 연락망 추가
         mRecyclerView1 = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager mlinear = new LinearLayoutManager(this);
         mlinear.setOrientation(LinearLayoutManager.VERTICAL);
@@ -60,10 +63,11 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
 
         mRecyclerView1.setAdapter(phoneAdapter);
 
-        SimpleItemTouchHelperCallback callback =  new SimpleItemTouchHelperCallback(phoneAdapter);
+        SimpleItemTouchHelperCallback callback = new SimpleItemTouchHelperCallback(phoneAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(mRecyclerView1);
 
+        numberssearchDB();
 
         /*Button message = findViewById(R.id.message_setting);
         message.setOnClickListener(new View.OnClickListener() {
@@ -91,10 +95,6 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
         });*/
 
 
-
-
-
-
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
@@ -107,7 +107,7 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         /*if(listener != null) {
             listener.onBackPressed();
         }else{
@@ -158,7 +158,7 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         String[] projection = {// 인덱스 값, 중복될 수 있음 -- 한 사람 번호가 여러개인 경우
-                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
                 , ContactsContract.CommonDataKinds.Phone.NUMBER};
         if (requestCode == 10) {
             Cursor cursor = getContentResolver().query(data.getData(), projection, null, null, null);
@@ -167,17 +167,68 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
             String getphone = cursor.getString(1);
             Toast.makeText(getApplicationContext(), "연락처 이름 : " + getname + "\n연락처 전화번호 : " + getphone, Toast.LENGTH_LONG).show();
 
-            /*Bundle bundle = new Bundle();
-            bundle.putString("name", getname);
-            bundle.putString("phone", getphone);
-*/
-            PhoneData.add(new Phone(getname,getphone));
+            com.example.mamason.ui.home.HomeFragment.myDBHelper myHelper = new HomeFragment.myDBHelper(this);
+            SQLiteDatabase sqlDB = myHelper.getWritableDatabase();
+            /*if (numberssearchDB2(getname, getphone) == 1) {
+                sqlDB.execSQL("insert into numbers values('" + getname + "','" + getphone + "');");
+                sqlDB.close();
+                Toast.makeText(this, "Inserted", Toast.LENGTH_LONG).show();
+                cursor.close();
+                PhoneData.add(new Phone(getname, getphone));
+                phoneAdapter = new PhoneAdapter(PhoneData);
+                mRecyclerView1.setAdapter(phoneAdapter);
+                phoneAdapter.notifyDataSetChanged();
+            }*/
+            //else { Toast.makeText(this, "이미 추가된 전화번호입니다.", Toast.LENGTH_LONG).show();}
+            sqlDB.execSQL("insert into numbers values('" + getname + "','" + getphone + "');");
+            sqlDB.close();
+            Toast.makeText(this, "Inserted", Toast.LENGTH_LONG).show();
+            cursor.close();
+            PhoneData.add(new Phone(getname, getphone));
             phoneAdapter = new PhoneAdapter(PhoneData);
             mRecyclerView1.setAdapter(phoneAdapter);
             phoneAdapter.notifyDataSetChanged();
-
-            cursor.close();
-
         }
     }
+
+    public void numberssearchDB() {
+        com.example.mamason.ui.home.HomeFragment.myDBHelper myHelper = new HomeFragment.myDBHelper(this);
+        SQLiteDatabase sqlDB = myHelper.getReadableDatabase();
+        Cursor cursor;
+        cursor = sqlDB.rawQuery("select * from numbers;", null);
+
+
+        while (cursor.moveToNext()) {
+            String string1 = cursor.getString(0) + System.lineSeparator();
+            String string2 = cursor.getString(1) + System.lineSeparator();
+            PhoneData.add(new Phone(string1, string2));
+            phoneAdapter = new PhoneAdapter(PhoneData);
+            mRecyclerView1.setAdapter(phoneAdapter);
+            phoneAdapter.notifyDataSetChanged();
+        }
+
+
+        cursor.close();
+        sqlDB.close();
+    }
+
+    public int numberssearchDB2(String name, String num) {
+        int i=0;
+        com.example.mamason.ui.home.HomeFragment.myDBHelper myHelper = new HomeFragment.myDBHelper(this);
+        SQLiteDatabase sqlDB = myHelper.getReadableDatabase();
+        Cursor cursor;
+        cursor = sqlDB.rawQuery("select * from numbers;", null);
+        while (cursor.moveToNext()) {
+            String string1 = cursor.getString(0) + System.lineSeparator();
+            String string2 = cursor.getString(1) + System.lineSeparator();
+            if (name.equals(string1) && num.equals(string2)) {
+                i= 1;
+            }
+            else {i= 0;}
+        }
+        cursor.close();
+        sqlDB.close();
+        return i;
+    }
+
 }

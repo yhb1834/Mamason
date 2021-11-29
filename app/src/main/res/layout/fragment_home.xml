@@ -84,7 +84,7 @@
                 android:text="긴급 메세지 설정" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/message1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="message1" />
