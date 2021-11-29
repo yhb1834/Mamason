@@ -29,6 +29,14 @@
             android:layout_weight="1" />
 
         <Button
+            android:id="@+id/init"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:backgroundTint="@color/yellow"
+            android:layout_marginRight="5dp"
+            android:text="초기화"
+            android:textSize="15sp" />
+        <Button
             android:id="@+id/addnum"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -37,12 +45,13 @@
             android:textSize="15sp" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,75 +64,84 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/timer1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="시간 선택" />
+            <EditText
+                android:id="@+id/messege1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:hint="내용을 입력하세요 "
+                android:inputType="textPersonName"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <TextView
-                android:id="@+id/time1"
+                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
-        </LinearLayout>
+                android:text="전달 메세지 내용" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/message_setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center|center_horizontal"
-                android:text="긴급 메세지 설정" />
-
-            <TextView
-                android:id="@+id/message1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="message1" />
         </LinearLayout>
 
         <Button
-            android:id="@+id/add"
+            android:id="@+id/msgadd"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:backgroundTint="@color/yellow"
-            android:text="+"
+            android:text="입력"
             android:textSize="20sp" />
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/time1"
+        android:layout_width="match_parent"
+        android:layout_height="192dp"
+        android:layout_weight="1"
+        android:text="No Alarm set" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textView"
+        <Button
+            android:id="@+id/cancel1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="예약된 응급 알람"
-            android:textSize="15sp" />
+            android:text="알람 삭제" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="알람 시간 설정" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!-- <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal">
 
-    </androidx.recyclerview.widget.RecyclerView>
+         <TextView
+             android:id="@+id/textView"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="20dp"
+             android:text="예약된 응급 알람"
+             android:textSize="15sp" />
+
+         <View
+             android:layout_width="0dp"
+             android:layout_height="0dp"
+             android:layout_weight="1" />
+
+     </LinearLayout>
+
+     <androidx.recyclerview.widget.RecyclerView
+         android:id="@+id/recyclerView2"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent">
+
+     </androidx.recyclerview.widget.RecyclerView>-->
 
 
 </LinearLayout>

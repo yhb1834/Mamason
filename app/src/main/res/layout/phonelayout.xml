@@ -5,12 +5,12 @@
     android:padding="5dp"
     android:gravity="center_vertical">
 
-    <TextView
+    <!--<TextView
         android:id="@+id/phone_index"
         android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:textSize="18sp" />
+        android:textSize="18sp" />-->
 
     <TextView
         android:id="@+id/phone_name"

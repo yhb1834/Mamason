@@ -42,14 +42,14 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ItemViewHold
 
         public ItemViewHolder(@NonNull final View itemView){
             super(itemView);
-            this.index = itemView.findViewById(R.id.phone_index);
+            //this.index = itemView.findViewById(R.id.phone_index);
             this.phname = itemView.findViewById(R.id.phone_name);
             this.phnum = itemView.findViewById(R.id.phone_num);
             this.sendm = itemView.findViewById(R.id.sendm1);
         }
 
         public void onBind(Phone ph){
-            index.setText(ph.getIndex());
+            //index.setText(ph.getIndex());
             phname.setText(ph.getPname());
             phnum.setText(ph.getPnum());
 
@@ -71,7 +71,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ItemViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), position + "번째 리스트 클릭", Toast.LENGTH_LONG).show();
+                //Toast.makeText(v.getContext(), position + "번째 리스트 클릭", Toast.LENGTH_LONG).show();
                 setPosition(position);
                 showalert(v);
             }

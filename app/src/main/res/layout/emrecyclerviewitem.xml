@@ -4,17 +4,21 @@
     android:layout_height="100dp">
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/ampm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/hour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="TextView" />
 
     <TextView

@@ -1,57 +1,52 @@
 package com.example.mamason.ui.home;
 
 import android.Manifest;
-import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.mamason.MainActivity;
 import com.example.mamason.R;
-import com.example.mamason.databinding.FragmentHomeBinding;
 
-import java.lang.reflect.Array;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRefreshListener {
     MainActivity mainActivity;
     public ArrayList<Phone> PhoneData;
     private RecyclerView mRecyclerView1;
     private PhoneAdapter phoneAdapter;
+    SwipeRefreshLayout mSwipeRefreshLayout;//새로고침
 
-    // 메인 액티비티 위에 올린다.
+    TextView mTextView;
+
+    /*// 메인 액티비티 위에 올린다.
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -63,11 +58,7 @@ public class HomeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mainActivity = null;
-    }
-
-    private ArrayList<emalarm_data> emAlarmData;
-    private RecyclerView mRecyclerView2;
-    private emAdapter mEmapdater;
+    }*/
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -81,6 +72,8 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager mlinear = new LinearLayoutManager(getActivity());
         mlinear.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView1.setLayoutManager(mlinear);
+        //mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefresh2);//새로고침
+        //mSwipeRefreshLayout.setOnRefreshListener(this);
 
         //phoneAdapter = new PhoneAdapter();
         PhoneData = new ArrayList<Phone>();
@@ -91,24 +84,15 @@ public class HomeFragment extends Fragment {
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(mRecyclerView1);
 
-
-        //알람 추가
-        mRecyclerView2 = (RecyclerView) v.findViewById(R.id.recyclerView2);
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView2.setLayoutManager(mLinearLayoutManager);
-        emAlarmData = new ArrayList<emalarm_data>();
-
-        for(int i=0; i<10; i++){
-            emAlarmData.add(new emalarm_data(i,String.valueOf(i),i, i, i,i,String.valueOf(i)));
-        }
-
-        mEmapdater = new emAdapter(emAlarmData);
-        mRecyclerView2.setAdapter(mEmapdater);
-        mEmapdater.notifyDataSetChanged();
-
         numberssearchDB(v);
 
-
+        Button init = v.findViewById(R.id.init);
+        init.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initializeDB(v);
+            }
+        });
 
         Button addnum = v.findViewById(R.id.addnum);
         addnum.setOnClickListener(new View.OnClickListener() {
@@ -123,29 +107,46 @@ public class HomeFragment extends Fragment {
         });
 
 
-        Button timer = v.findViewById(R.id.timer1);
-        timer.setOnClickListener(new View.OnClickListener() {
+        mTextView =  v.findViewById(R.id.time1);
+
+        Button button = (Button) v.findViewById(R.id.button2);
+        button.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
+                //DialogFragment timePicker = new TimePickerFragment();
+                //timePicker.show(getActivity().getSupportFragmentManager(), "time picker");
+                TimePicker timePicker = new TimePicker(getContext());
+                timePicker.setIs24HourView(true);
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
 
-                alert.setTitle("Input your name");
-                alert.setMessage("Plz, input yourname");
+                alert.setTitle("알람 시간 설정");
 
-
-                final EditText name = new EditText(getContext());
-                final TimePicker timePicker = new TimePicker(getContext());
-
-                alert.setView(name);
                 alert.setView(timePicker);
-
                 alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        String username = name.getText().toString();
-
+                        int hour, minute;
+                        String am_pm;
+                        if (Build.VERSION.SDK_INT >= 23 ){
+                            hour = timePicker.getHour();
+                            minute = timePicker.getMinute();
+                            onTimeSet(timePicker, hour, minute);
+                        }
+                        else{
+                            Toast.makeText(getContext(), "your Build.VERSION.SDK_INT < 23", Toast.LENGTH_SHORT).show();
+                            hour = timePicker.getCurrentHour();
+                            minute = timePicker.getCurrentMinute();
+                        }
+                        if(hour > 12) {
+                            am_pm = "PM";
+                            hour = hour - 12;
+                        }
+                        else
+                        {
+                            am_pm="AM";
+                        }
+                        mTextView.setText("Selected Date: "+am_pm+" " +hour +":"+ minute);
                     }
                 });
-
 
                 alert.setNegativeButton("no",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -156,10 +157,45 @@ public class HomeFragment extends Fragment {
                 alert.show();
 
             }
+
         });
 
+        Button buttonCancelAlarm = v.findViewById(R.id.cancel1);
+        buttonCancelAlarm.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick (View v) {
+                cancelAlarm();
+            }
+        });
+
+        /*Button timer = v.findViewById(R.id.timer1);
+        timer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+
+                alert.setTitle("알람 시간 설정");
+                final TimePicker timePicker = new TimePicker(getContext());
+
+                alert.setView(timePicker);
+                alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+                alert.setNegativeButton("no",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+                alert.show();
+            }
+        });*/
+
         //EditText message1 = v.findViewById(R.id.message1);
-        Button message = v.findViewById(R.id.message_setting);
+        /*Button message = v.findViewById(R.id.message_setting);
         message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,7 +203,6 @@ public class HomeFragment extends Fragment {
 
                 alert.setTitle("내용 및 예상 병명");
                 alert.setMessage("내용을 입력하세요");
-
 
                 final EditText content = new EditText(getContext());
 
@@ -188,23 +223,37 @@ public class HomeFragment extends Fragment {
                 });
 
                 alert.show();
-
             }
-        });
+        });*/
 
-        Button addAlarm = v.findViewById(R.id.add);
+        /*Button addAlarm = v.findViewById(R.id.add);
         addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initializeDB(v);
             }
-        });
+        });*/
+
 
 
         return v;
     }
 
 
+    /*public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                //adapter.notifyDataSetChanged();
+                //GettingPHP gPHP = new GettingPHP();
+                //gPHP.execute(url_showPrescription);
+                //listView.setAdapter(adapter);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 100);
+    }
+*/
 
     private void sendSMS(String phoneNumber, String message){
         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.SEND_SMS},1);
@@ -267,4 +316,42 @@ public class HomeFragment extends Fragment {
     }
 
 
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
+
+        updateTimeText(c);
+        startAlarm(c);
+    }
+
+    private void updateTimeText(Calendar c){
+        String timeText = "Alarm set for : ";
+        timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
+
+        mTextView.setText(timeText);
+    }
+
+    private void startAlarm(Calendar c){
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, 0);
+
+        if(c.before((Calendar.getInstance()))){
+            c.add(Calendar.DATE, 1);
+        }
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 1*60*1000 ,  pendingIntent);
+
+    }
+
+    private void cancelAlarm(){
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, 0);
+
+        alarmManager.cancel(pendingIntent);
+        mTextView.setText("Alarm canceled");
+    }
 }

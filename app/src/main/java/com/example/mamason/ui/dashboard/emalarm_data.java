@@ -1,6 +1,15 @@
-package com.example.mamason.ui.home;
+package com.example.mamason.ui.dashboard;
 
 public class emalarm_data {
+    public String getAmpm() {
+        return ampm;
+    }
+
+    public void setAmpm(String ampm) {
+        this.ampm = ampm;
+    }
+
+    private String ampm;
     private int date;
     private int hour;
     private int min;
@@ -72,6 +81,12 @@ public class emalarm_data {
         this.repeat = repeat;
         this.name = name;
         this.alarmid = alarmid;
+        this.content = content;
+    }
+    public emalarm_data(String ampm,int hour, int min, String content) {
+        this.ampm = ampm;
+        this.hour = hour;
+        this.min = min;
         this.content = content;
     }
 }

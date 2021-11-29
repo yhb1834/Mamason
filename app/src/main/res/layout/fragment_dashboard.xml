@@ -21,12 +21,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName2"
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="내용을 입력하세요"
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/medicine_add"
@@ -36,6 +36,7 @@
         android:text="약 알람 추가" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1" />
