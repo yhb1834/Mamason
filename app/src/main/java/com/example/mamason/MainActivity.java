@@ -1,13 +1,16 @@
 package com.example.mamason;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -19,8 +22,13 @@ import com.example.mamason.ui.home.MessageFragment;
 import com.example.mamason.ui.home.Phone;
 import com.example.mamason.ui.home.PhoneAdapter;
 import com.example.mamason.ui.home.SimpleItemTouchHelperCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -41,6 +49,18 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
     public ArrayList<Phone> PhoneData;
     private RecyclerView mRecyclerView1;
     private PhoneAdapter phoneAdapter;
+
+    private static final String TAG = "googlemap_example";
+    private static final int GPS_ENABLE_REQUEST_CODE = 2001;
+    boolean needRequest = false;
+
+
+    private static final int REQUEST_CODE_LOCATION = 2000;//임의의 정수로 정의
+    private static final int REQUEST_CODE_GPS = 2001;//임의의 정수로 정의
+    private GoogleMap googleMap;
+    LocationManager locationManager;
+    MapFragment mapFragment;
+    boolean setGPS = false;
 
     //private ActivityMainBinding binding;
 
@@ -152,10 +172,71 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
         }
     }
 
-
+    /*//GPS 활성화를 위한 다이얼로그의 결과 처리
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQUEST_CODE_GPS:
+                //Log.d(TAG,""+resultCode);
+                //if (resultCode == RESULT_OK)
+                //사용자가 GPS 활성 시켰는지 검사
+                if (locationManager == null)
+                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    // GPS 가 ON으로 변경되었을 때의 처리.
+                    setGPS = true;
+
+                    mapFragment.getMapAsync((OnMapReadyCallback) MainActivity.this);
+                }
+                break;
+        }
+    }
+*/
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        /*switch (requestCode) {
+            case REQUEST_CODE_GPS:
+                //Log.d(TAG,""+resultCode);
+                //if (resultCode == RESULT_OK)
+                //사용자가 GPS 활성 시켰는지 검사
+                if (locationManager == null)
+                    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    // GPS 가 ON으로 변경되었을 때의 처리.
+                    setGPS = true;
+
+                    mapFragment.getMapAsync((OnMapReadyCallback) MainActivity.this);
+                }
+                break;
+        }
+*/
+        switch (requestCode) {
+
+            case GPS_ENABLE_REQUEST_CODE:
+
+                //사용자가 GPS 활성 시켰는지 검사
+                if (checkLocationServicesStatus()) {
+                    if (checkLocationServicesStatus()) {
+
+                        Log.d(TAG, "onActivityResult : GPS 활성화 되있음");
+
+
+                        needRequest = true;
+
+                        return;
+                    }
+                }
+
+                break;
+        }
 
         String[] projection = {// 인덱스 값, 중복될 수 있음 -- 한 사람 번호가 여러개인 경우
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
@@ -189,6 +270,13 @@ public class MainActivity<OnBackPressedListener> extends AppCompatActivity {
             mRecyclerView1.setAdapter(phoneAdapter);
             phoneAdapter.notifyDataSetChanged();
         }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public boolean checkLocationServicesStatus() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     public void numberssearchDB() {
