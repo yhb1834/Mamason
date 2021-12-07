@@ -14,7 +14,7 @@
         <entry key="app/src/main/res/drawable/icon.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/emRecyclerviewItem.xml" value="0.24583333333333332" />
-        <entry key="app/src/main/res/layout/emrecyclerviewitem.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/emrecyclerviewitem.xml" value="0.45" />
         <entry key="app/src/main/res/layout/fragment_alarm_add.xml" value="0.18020833333333333" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.24583333333333332" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2708861955066526" />

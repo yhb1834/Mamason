@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -45,20 +46,8 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
     SwipeRefreshLayout mSwipeRefreshLayout;//새로고침
 
     TextView mTextView;
-
-    /*// 메인 액티비티 위에 올린다.
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mainActivity = (MainActivity) getActivity();
-    }
-
-    // 메인 액티비티에서 내려온다.
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mainActivity = null;
-    }*/
+    EditText message1;
+    TextView msgView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -109,6 +98,18 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
 
         mTextView =  v.findViewById(R.id.time1);
 
+        //예정 알람 불러오기
+        myDBHelper myHelper = new myDBHelper(getActivity());
+        SQLiteDatabase sqlDB = myHelper.getReadableDatabase();
+        Cursor cursor;
+        cursor = sqlDB.rawQuery("select * from emAlarm order by rowid desc limit 1;", null);
+        while(cursor.moveToNext()){
+            String string1 = cursor.getString(0) + System.lineSeparator();
+            String string2 = cursor.getString(1) + System.lineSeparator();
+            String string3 = cursor.getString(2) + System.lineSeparator();
+            if (!string1.equals("")) mTextView.setText("예정된 알람 \n"+string1+string2+":"+string3);
+        }
+
         Button button = (Button) v.findViewById(R.id.button2);
         button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -145,6 +146,13 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
                             am_pm="AM";
                         }
                         mTextView.setText("Selected Date: "+am_pm+" " +hour +":"+ minute);
+                        Toast.makeText(getContext(),"응급 알람이 설정되었습니다", Toast.LENGTH_LONG);
+
+                        myDBHelper myHelper = new myDBHelper(getActivity());
+                        SQLiteDatabase emAlarm = myHelper.getWritableDatabase();
+                        emAlarm.execSQL("insert into emAlarm values('"+am_pm+"', '"+hour+"','"+minute+"')");
+                        emAlarm.close();
+                        Toast.makeText(getActivity(), "메세지가 저장되었습니다", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -168,72 +176,27 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
             }
         });
 
-        /*Button timer = v.findViewById(R.id.timer1);
-        timer.setOnClickListener(new View.OnClickListener() {
+        msgView = v.findViewById(R.id.msgView);
+        cursor = sqlDB.rawQuery("select * from msg order by rowid desc limit 1;", null);
+        while(cursor.moveToNext()){
+            String string1 = cursor.getString(0) + System.lineSeparator();
+            if (!string1.equals("")) msgView.setText(string1);
+        }
+        cursor.close();
+        sqlDB.close();
+
+        Button msgadd = v.findViewById(R.id.msgadd);
+        msgadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-
-                alert.setTitle("알람 시간 설정");
-                final TimePicker timePicker = new TimePicker(getContext());
-
-                alert.setView(timePicker);
-                alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                });
-
-                alert.setNegativeButton("no",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                });
-
-                alert.show();
+                msgView.setText(message1.getText());
+                myDBHelper myHelper = new myDBHelper(getActivity());
+                SQLiteDatabase msg = myHelper.getWritableDatabase();
+                msg.execSQL("insert into msg values('" + message1.getText() +"')");
+                msg.close();
+                Toast.makeText(getActivity(), "메세지가 저장되었습니다", Toast.LENGTH_LONG).show();
             }
-        });*/
-
-        //EditText message1 = v.findViewById(R.id.message1);
-        /*Button message = v.findViewById(R.id.message_setting);
-        message.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-
-                alert.setTitle("내용 및 예상 병명");
-                alert.setMessage("내용을 입력하세요");
-
-                final EditText content = new EditText(getContext());
-
-                alert.setView(content);
-
-                alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String contents = content.getText().toString();
-                        //message1.setText(contents);
-
-                    }
-                });
-
-                alert.setNegativeButton("no",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                });
-
-                alert.show();
-            }
-        });*/
-
-        /*Button addAlarm = v.findViewById(R.id.add);
-        addAlarm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });*/
-
-
+        });
 
         return v;
     }
@@ -264,19 +227,27 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
 
     public static class myDBHelper extends SQLiteOpenHelper {
         public myDBHelper(Context context){
-            super(context, "myDB", null, 1);
+            super(context, "myDB4", null, 1);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("create table numbers (mName char(20), mNumber char(20));");
+            db.execSQL("create table msg (content text);");
+            db.execSQL("create table emAlarm (ampam char(4), Hour char(10), Minute char(10));");
+            db.execSQL("create table pAlarm (ampam char(4), Hour char(10), Minute char(10), content text);");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("drop table if exists numbers;");
+            db.execSQL("drop table if exists msg;");
+            db.execSQL("drop table if exists emAlarm;");
+            db.execSQL("drop table if exists pAlarm;");
+
             onCreate(db);
         }
+
     }
 
     public void initializeDB(View view){
@@ -287,14 +258,28 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
         Toast.makeText(getActivity(), "Initialized", Toast.LENGTH_LONG).show();
     }
 
-    /*public void insertDB(View view){
+    /*public void insertMSG(View view){
         myDBHelper myHelper = new myDBHelper(getActivity());
-        SQLiteDatabase sqlDB = myHelper.getWritableDatabase();
-        sqlDB.execSQL("insert into groupTBL values('" +  + "','" + binding.editText2.getText().toString()+"');");
-        sqlDB.close();
+        SQLiteDatabase msg = myHelper.getWritableDatabase();
+        msg.execSQL("insert into groupTBL values('" +  + "','" + binding.editText2.getText().toString()+"');");
+        msg.close();
         Toast.makeText(getActivity(), "Inserted", Toast.LENGTH_LONG).show();
-
     }*/
+
+
+    public void emAlarmsearchDB(View view){
+        myDBHelper myHelper = new myDBHelper(getActivity());
+        SQLiteDatabase sqlDB = myHelper.getReadableDatabase();
+        Cursor cursor;
+        cursor = sqlDB.rawQuery("select * from emAlarm;", null);
+
+        while(cursor.moveToNext()){
+            String string1 = cursor.getString(0) + System.lineSeparator();
+            String string2 = cursor.getString(1) + System.lineSeparator();
+        }
+        cursor.close();
+        sqlDB.close();
+    }
 
     public void numberssearchDB(View view){
         myDBHelper myHelper = new myDBHelper(getActivity());
