@@ -12,18 +12,19 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/icon.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
         <entry key="app/src/main/res/layout/emRecyclerviewItem.xml" value="0.24583333333333332" />
         <entry key="app/src/main/res/layout/emrecyclerviewitem.xml" value="0.45" />
         <entry key="app/src/main/res/layout/fragment_alarm_add.xml" value="0.18020833333333333" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.24583333333333332" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2708861955066526" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2669404517453799" />
         <entry key="app/src/main/res/layout/fragment_medicine.xml" value="0.16041666666666668" />
         <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.24583333333333332" />
         <entry key="app/src/main/res/layout/phonelayout.xml" value="0.24583333333333332" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.24583333333333332" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/icon2.xml" value="0.1" />
       </map>
     </option>
   </component>

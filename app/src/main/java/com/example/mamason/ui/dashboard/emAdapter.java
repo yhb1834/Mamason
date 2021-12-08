@@ -1,7 +1,11 @@
 package com.example.mamason.ui.dashboard;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mamason.R;
+import com.example.mamason.ui.home.AlertReceiver;
 import com.example.mamason.ui.home.HomeFragment;
 import com.example.mamason.ui.home.Phone;
 
@@ -83,18 +88,21 @@ public class emAdapter extends RecyclerView.Adapter<emAdapter.ItemViewHolder>
                     @Override public void onClick(DialogInterface dialogInterface, int i) {
                         ArrayList<emalarm_data> ph = getListData();
                         emalarm_data simple = ph.get(position);
-                        //String name = simple.getPname();
-                        //String num = simple.getPnum();
+                        /*String name = simple.getPname();
+                        String num = simple.getPnum();
 
-                        //HomeFragment.myDBHelper myHelper = new HomeFragment.myDBHelper(v.getContext());
-                        //SQLiteDatabase sqldb = myHelper.getWritableDatabase();
-                        //sqldb.execSQL("delete from numbers where mNumber='"+num +"';");
+                        HomeFragment.myDBHelper myHelper = new HomeFragment.myDBHelper(v.getContext());
+                        SQLiteDatabase sqldb = myHelper.getWritableDatabase();
+                        sqldb.execSQL("delete from pAlarm where mNumber='"+num +"';");
 
+                        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, 0);
+                        alarmManager.cancel(pendingIntent);*/
 
                         mEmalarm.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, mEmalarm.size());
-
                     }
                 })
                 .setNegativeButton("아니요", new DialogInterface.OnClickListener() {

@@ -48,7 +48,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="230dp">
+        android:layout_height="200dp">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -70,27 +70,28 @@
                 android:layout_height="match_parent"
                 android:ems="10"
                 android:hint="내용을 입력하세요 "
-                android:inputType="textPersonName"
+                android:inputType="textMultiLine"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <TextView
                 android:id="@+id/msgView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
+                android:layout_height="match_parent"
                 android:paddingLeft="5dp"
                 android:paddingBottom="10dp"
-                android:text="전달 메세지 내용" />
+                android:text="전달할 메세지가 없습니다"
+                android:singleLine="false"
+                android:textSize="15sp" />
 
         </LinearLayout>
 
         <Button
             android:id="@+id/msgadd"
             android:layout_width="89dp"
-            android:layout_height="48dp"
+            android:layout_height="match_parent"
             android:backgroundTint="@color/yellow"
             android:text="메세지 입력"
-            android:textSize="15sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -125,6 +126,14 @@
         android:textSize="30sp"
         android:gravity="center"
         android:text="No Alarm set" />
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/yellow"
+        android:text="응급메세지 전송"
+        android:textSize="12sp" />
 
     <!-- <LinearLayout
          android:layout_width="match_parent"

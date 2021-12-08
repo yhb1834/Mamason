@@ -43,26 +43,21 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
     public ArrayList<Phone> PhoneData;
     private RecyclerView mRecyclerView1;
     private PhoneAdapter phoneAdapter;
-    SwipeRefreshLayout mSwipeRefreshLayout;//새로고침
 
     TextView mTextView;
     EditText message1;
     TextView msgView;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
-
         //긴급 연락망 추가
         mRecyclerView1 = (RecyclerView) v.findViewById(R.id.recyclerView);
         LinearLayoutManager mlinear = new LinearLayoutManager(getActivity());
         mlinear.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView1.setLayoutManager(mlinear);
-        //mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefresh2);//새로고침
-        //mSwipeRefreshLayout.setOnRefreshListener(this);
 
         //phoneAdapter = new PhoneAdapter();
         PhoneData = new ArrayList<Phone>();
@@ -104,10 +99,10 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
         Cursor cursor;
         cursor = sqlDB.rawQuery("select * from emAlarm order by rowid desc limit 1;", null);
         while(cursor.moveToNext()){
-            String string1 = cursor.getString(0) + System.lineSeparator();
-            String string2 = cursor.getString(1) + System.lineSeparator();
-            String string3 = cursor.getString(2) + System.lineSeparator();
-            if (!string1.equals("")) mTextView.setText("예정된 알람 \n"+string1+string2+":"+string3);
+            String string1 = cursor.getString(0);
+            String string2 = cursor.getString(1);
+            String string3 = cursor.getString(2);
+            if (!string1.equals("")) mTextView.setText("예약된 응급 알람 \n"+string1+"  " +string2+" : "+string3);
         }
 
         Button button = (Button) v.findViewById(R.id.button2);
@@ -145,14 +140,13 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
                         {
                             am_pm="AM";
                         }
-                        mTextView.setText("Selected Date: "+am_pm+" " +hour +":"+ minute);
+                        mTextView.setText("예약된 응급 알람\n"+am_pm+"  " +hour +":"+ minute);
                         Toast.makeText(getContext(),"응급 알람이 설정되었습니다", Toast.LENGTH_LONG);
 
                         myDBHelper myHelper = new myDBHelper(getActivity());
                         SQLiteDatabase emAlarm = myHelper.getWritableDatabase();
                         emAlarm.execSQL("insert into emAlarm values('"+am_pm+"', '"+hour+"','"+minute+"')");
                         emAlarm.close();
-                        Toast.makeText(getActivity(), "메세지가 저장되었습니다", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -173,6 +167,7 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
             @Override
             public void onClick (View v) {
                 cancelAlarm();
+                initializeeAlarmDB(v);
             }
         });
 
@@ -186,6 +181,7 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
         sqlDB.close();
 
         Button msgadd = v.findViewById(R.id.msgadd);
+        message1 = v.findViewById(R.id.message1);
         msgadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,25 +194,58 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
             }
         });
 
+        Button send = v.findViewById(R.id.send);
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showalert2(v);
+            }
+        });
+
+
         return v;
     }
 
 
-    /*public void onRefresh() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+    public void showalert2(View v){
+        android.app.AlertDialog.Builder msgBuilder = new android.app.AlertDialog.Builder(v.getContext())
+                .setTitle("응급 문자")
+                .setMessage("응급 문자를 보내시겠습까?")
+                .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialogInterface, int i) {
+                        //ArrayList<Phone> ph = getListData();
+                        //Phone simple = ph.get(position);
+                        String string1 = "";
+                        String string2 = "";
+                        myDBHelper myHelper = new myDBHelper(getActivity());
+                        SQLiteDatabase sqlDB = myHelper.getReadableDatabase();
+                        Cursor cursor;
+                        cursor = sqlDB.rawQuery("select * from numbers order by rowid limit 1;", null);
+                        while(cursor.moveToNext()){
+                            string1 = cursor.getString(1);
+                        }
 
-                //adapter.notifyDataSetChanged();
-                //GettingPHP gPHP = new GettingPHP();
-                //gPHP.execute(url_showPrescription);
-                //listView.setAdapter(adapter);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        }, 100);
+                        cursor = sqlDB.rawQuery("select * from msg order by rowid desc limit 1;", null);
+                        while(cursor.moveToNext()){
+                            string2 = cursor.getString(0) + System.lineSeparator();
+                            if (string1.equals("")) string2 = "현재 응급 상황입니다. 구조 요청 바랍니다.";
+                        }
+                        cursor.close();
+                        sqlDB.close();
+
+                        String num = string1;
+                        String msg = string2;
+                        sendSMS(num,msg);
+                    }
+                })
+                .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialogInterface, int i) {
+                        //Toast.makeText(, "안 끔", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        android.app.AlertDialog msgDlg = msgBuilder.create();
+        msgDlg.show();
     }
-*/
 
     private void sendSMS(String phoneNumber, String message){
         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.SEND_SMS},1);
@@ -255,7 +284,14 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
         SQLiteDatabase numbers = myHelper.getWritableDatabase();
         myHelper.onUpgrade(numbers,1,2);
         numbers.close();
-        Toast.makeText(getActivity(), "Initialized", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "연락망 초기화", Toast.LENGTH_LONG).show();
+    }
+    public void initializeeAlarmDB(View view){
+        myDBHelper myHelper = new myDBHelper(getActivity());
+        SQLiteDatabase emAlarm = myHelper.getWritableDatabase();
+        myHelper.onUpgrade(emAlarm,1,2);
+        emAlarm.close();
+        Toast.makeText(getActivity(), "응급 알람 삭제", Toast.LENGTH_LONG).show();
     }
 
     /*public void insertMSG(View view){
@@ -322,7 +358,7 @@ public class HomeFragment extends Fragment{ //implements SwipeRefreshLayout.OnRe
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getActivity(), AlertReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1, intent, 0);
-
+        PendingIntent mpendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         if(c.before((Calendar.getInstance()))){
             c.add(Calendar.DATE, 1);
         }

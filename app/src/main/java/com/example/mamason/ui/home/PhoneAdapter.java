@@ -101,7 +101,6 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ItemViewHold
                         SQLiteDatabase sqldb = myHelper.getWritableDatabase();
                         sqldb.execSQL("delete from numbers where mNumber='"+num +"';");
 
-
                         mList.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, mList.size());

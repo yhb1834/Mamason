@@ -3,16 +3,22 @@ package com.example.mamason.ui.home;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.example.mamason.MainActivity;
 import com.example.mamason.R;
 
 public class NotificationHelper extends ContextWrapper {
+    int notification_id = (int) (System.currentTimeMillis() % 10000);
+    Intent sIntent = new Intent(getApplicationContext(), MainActivity.class);
+
     public static final String channel1ID = "channel1ID";
     public static final String channel1Name = "channel 1 ";
     public static final String channel2ID = "channel2ID";
@@ -51,7 +57,6 @@ public class NotificationHelper extends ContextWrapper {
         if (mManager == null){
             mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
-
         return mManager;
     }
 
@@ -60,7 +65,6 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.icon);
-
     }
 
     public NotificationCompat.Builder getChannel2Notification(String title, String message){
@@ -69,9 +73,21 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentText(message)
                 .setSmallIcon(R.drawable.add);
     }
-
+    PendingIntent sPpendingIntent = PendingIntent.getActivity(getApplicationContext(),notification_id, sIntent,PendingIntent.FLAG_UPDATE_CURRENT);
     public NotificationCompat.Builder getChannelNotification(){
         return new NotificationCompat.Builder(getApplicationContext(), channel1ID)
-                .setSmallIcon(R.drawable.hand);
+                .setContentTitle("응급 알람")
+                .setContentText("응급 구조 요청 메세지를 보내시겠습니까")
+                .setSmallIcon(R.drawable.hand)
+                .setAutoCancel(false)
+                .setFullScreenIntent(sPpendingIntent, true);
+    }
+
+    public NotificationCompat.Builder getChannelNotification2(){
+        return new NotificationCompat.Builder(getApplicationContext(), channel1ID)
+                .setContentTitle("약 알람")
+                .setContentText("약 먹을 시간이다~ 약 먹어!")
+                .setSmallIcon(R.drawable.hand)
+                .setFullScreenIntent(sPpendingIntent, true);
     }
 }

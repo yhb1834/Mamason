@@ -635,7 +635,7 @@ public class NotificationsFragment extends Fragment implements ActivityCompat.On
                 .key("AIzaSyDw__SyFlzsRKMiZ1hP9c2C_Wr2jxLvctw")
                 .latlng(location.latitude, location.longitude)//현재 위치
                 .radius(500) //500 미터 내에서 검색
-                .type(PlaceType.HOSPITAL) //음식점
+                .type(PlaceType.HOSPITAL) //병원
                 .build()
                 .execute();
     }
@@ -651,7 +651,7 @@ public class NotificationsFragment extends Fragment implements ActivityCompat.On
                 .key("AIzaSyDw__SyFlzsRKMiZ1hP9c2C_Wr2jxLvctw")
                 .latlng(location.latitude, location.longitude)//현재 위치
                 .radius(500) //500 미터 내에서 검색
-                .type(PlaceType.PHARMACY) //음식점
+                .type(PlaceType.PHARMACY) //약국
                 .build()
                 .execute();
     }
